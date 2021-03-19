@@ -11,6 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.muffin.reditclone.security.JwtAuthenticationFilter;
 
 import lombok.AllArgsConstructor;
 
@@ -19,6 +22,7 @@ import lombok.AllArgsConstructor;
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	private final UserDetailsService userDetailsService;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	@Override
 	public void configure(HttpSecurity security) throws Exception {
@@ -28,6 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			.permitAll()
 			.anyRequest()
 			.authenticated();
+		security.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 	
 	@Autowired
