@@ -12,15 +12,14 @@ import com.muffin.reditclone.model.dto.PostResponse;
 @Mapper(componentModel = "spring")
 public interface PostMapper {
 
-	/**
-	 * We can remove a @Mapping when target and source is the same
-	 */
 	@Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
+	@Mapping(target = "user", source = "user")
+	@Mapping(target = "subreddit", source = "subreddit")
 	@Mapping(target = "description", source = "postRequest.description")
 	Post map(PostRequest postRequest, Subreddit subreddit, User user);
 	
 	@Mapping(target = "id", source = "postId")
 	@Mapping(target = "subredditName", source = "subreddit.name")
-	@Mapping(target = "userName", source = "user.name")
+	@Mapping(target = "userName", source = "user.username")
 	PostResponse mapToDto(Post post);
 }
