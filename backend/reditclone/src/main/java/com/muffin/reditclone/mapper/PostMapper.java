@@ -2,24 +2,47 @@ package com.muffin.reditclone.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.muffin.reditclone.model.Post;
 import com.muffin.reditclone.model.Subreddit;
 import com.muffin.reditclone.model.User;
 import com.muffin.reditclone.model.dto.PostRequest;
 import com.muffin.reditclone.model.dto.PostResponse;
+import com.muffin.reditclone.repository.CommentRepository;
+import com.muffin.reditclone.repository.VoteRepository;
+import com.muffin.reditclone.service.AuthService;
 
 @Mapper(componentModel = "spring")
-public interface PostMapper {
-
+public abstract class PostMapper {
+	
+	@Autowired
+	private CommentRepository commentRepository;
+	@Autowired
+	private VoteRepository voteRepository;
+	@Autowired
+	private AuthService authService;
+	
 	@Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
 	@Mapping(target = "user", source = "user")
 	@Mapping(target = "subreddit", source = "subreddit")
 	@Mapping(target = "description", source = "postRequest.description")
-	Post map(PostRequest postRequest, Subreddit subreddit, User user);
+	@Mapping(target = "voteCount", constant = "0")
+	public abstract Post map(PostRequest postRequest, Subreddit subreddit, User user);
 	
 	@Mapping(target = "id", source = "postId")
 	@Mapping(target = "subredditName", source = "subreddit.name")
 	@Mapping(target = "userName", source = "user.username")
-	PostResponse mapToDto(Post post);
+	@Mapping(target = "commentCount", expression = "java(commentCount(post))")
+	@Mapping(target = "duration", expression = "java(getDuration(post))")
+	public abstract PostResponse mapToDto(Post post);
+	
+	Integer commentCount(Post post) {
+		return commentRepository.findByPost(post).size();
+	}
+	
+	String getDuration(Post post) {
+		return TimeAgo.using(post.getCreatedDate().toEpochMilli());
+	}
 }

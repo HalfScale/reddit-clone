@@ -1,5 +1,7 @@
 package com.muffin.reditclone.model.dto;
 
+import java.time.Instant;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,14 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostResponse {
+public class CommentsDto {
+	private Long postId;
 	private Long id;
-	private String postName;
-	private String url;
-	private String description;
+	private Instant createdDate;
+	private String text;
 	private String userName;
-	private String subredditName;
-	private Integer voteCount;
-	private Integer commentCount;
-	private String duration;
 }
